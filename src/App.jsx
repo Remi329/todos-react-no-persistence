@@ -5,7 +5,30 @@ import Input from "./components/Input";
 // TODO: Use `useReducer` to manage complex state - CRUD
 
 function App() {
+  // Array destructuring
   const [todos, setTodos] = React.useState([]);
+
+  const handleClick = (e) => {
+    switch (e.target.innerText.toLowerCase()) {
+      case "update":
+        setTodos((prevTodos) =>
+          prevTodos.map((todo) => {
+            if (todo.id === Number(e.target.dataset.todo)) {
+              todo.text = "This will be updated";
+            }
+
+            return todo;
+          })
+        );
+
+        break;
+      case "delete":
+        console.log("Delketing", e.target.dataset.todo);
+        break;
+      default:
+        console.log("👋🏾");
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,6 +37,8 @@ function App() {
     const newTodo = form.elements[0].value.trim();
     if (newTodo) {
       setTodos((prevTodos) =>
+        // Whatever is returned from the useState dispatch will be the new state
+        // AVOID MUTATIONS!
         prevTodos.concat({
           id: prevTodos.length + 1,
           text: newTodo,
@@ -25,20 +50,39 @@ function App() {
   };
 
   return (
+    // Fragment tag
     <>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="p-4">
         <Input />
         <button
           type="submit"
-          className="bg-green-500 ml-1 p-4 rounded-sm text-white"
+          className="bg-green-500 ml-1 p-4 rounded-sm text-white my-2"
         >
           Add Todo
         </button>
       </form>
 
-      <ol>
+      <ol className="p-4">
         {todos.map(({ id, text }) => (
-          <li key={id}>{text}</li>
+          // TODO: Move this to a new component
+          <li key={id} className="my-2">
+            {text}{" "}
+            <button
+              className="bg-yellow-500 ml-1 rounded-xl p-2"
+              onClick={handleClick}
+              // TODO: Find out about naming rules on data attributes
+              data-todo={id}
+            >
+              Update
+            </button>
+            <button
+              className="bg-red-500 ml-1 rounded-xl text-white p-2"
+              onClick={handleClick}
+              data-todo={id}
+            >
+              Delete
+            </button>
+          </li>
         ))}
       </ol>
     </>
