@@ -5,8 +5,14 @@ import Input from "./components/Input";
 // TODO: Use `useReducer` to manage complex state - CRUD
 
 function App() {
+  const [inputValue, setInputValue] = React.useState("");
+
   // Array destructuring
   const [todos, setTodos] = React.useState([]);
+
+  const handleChange = (e) => {
+    setInputValue(e.target.value);
+  };
 
   const handleClick = (e) => {
     switch (e.target.innerText.toLowerCase()) {
@@ -14,7 +20,11 @@ function App() {
         setTodos((prevTodos) =>
           prevTodos.map((todo) => {
             if (todo.id === Number(e.target.dataset.todo)) {
-              todo.text = "This will be updated";
+              // Avoid mutating the original todo object
+              // We create a new object by spreading out the original (...todo)
+              // We compose the new object with the updated properties
+              const updatedTodo = { ...todo, text: "Updated!" };
+              return updatedTodo;
             }
 
             return todo;
@@ -53,7 +63,7 @@ function App() {
     // Fragment tag
     <>
       <form onSubmit={handleSubmit} className="p-4">
-        <Input />
+        <Input value={inputValue} changeHandler={handleChange} />
         <button
           type="submit"
           className="bg-green-500 ml-1 p-4 rounded-sm text-white my-2"
