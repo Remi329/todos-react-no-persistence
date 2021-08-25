@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import Input from "./components/Input";
+import api from "./services/api.js";
 
 function App() {
   // Are we updating?
@@ -11,6 +12,18 @@ function App() {
 
   // Array destructuring
   const [todos, setTodos] = React.useState([]);
+
+  React.useEffect(
+    () => {
+      api.getTodos().then((todos) => {
+        setTodos(todos);
+      });
+    },
+
+    // Dependency array
+    // Empty means only run this `useEffect` once
+    []
+  );
 
   const handleChange = (e) => {
     // As we type in the input, we want to update the state
@@ -100,10 +113,10 @@ function App() {
       </form>
 
       <ol className="p-4">
-        {todos.map(({ id, text }) => (
+        {todos.map(({ id, description }) => (
           // TODO: Move this to a new component
           <li key={id} className="my-2">
-            {text}{" "}
+            {description}{" "}
             <button
               className="bg-yellow-500 ml-1 rounded-xl p-2"
               onClick={handleClick}
